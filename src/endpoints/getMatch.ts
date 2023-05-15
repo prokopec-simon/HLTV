@@ -273,17 +273,30 @@ function getOdds($: HLTVPage): ProviderOdds[] {
         oddElement.find('.odds-cell').last().find('a').text().replace('%', '')
       )
 
-      const providerUrl = new URL(
-        oddElement.find('td').first().find('a').attr('href')!
-      )
-
-      return {
-        provider: providerUrl.hostname
+      //pick provider name from logo img tag alt if provider redirect is made via hltv custom url
+      const providerHref = oddElement.find('td').first().find('a').attr('href')!
+      let providerName = ''
+      if (providerHref.startsWith('/')) {
+        providerName = oddElement
+          .find('td')
+          .first()
+          .find('a')
+          .find('img')
+          .first()
+          .attr('alt')!
+          .split('Logo for ')[1]
+          .split(' ')[0]
+      } else {
+        const providerUrl = new URL(providerHref)
+        providerName = providerUrl.hostname
           .split('.')
           .reverse()
           .splice(0, 2)
           .reverse()
-          .join('.'),
+          .join('.')
+      }
+      return {
+        provider: providerName,
         team1: convertOdds ? percentageToDecimalOdd(oddTeam1) : oddTeam1,
         team2: convertOdds ? percentageToDecimalOdd(oddTeam2) : oddTeam2
       }
