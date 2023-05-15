@@ -194,6 +194,11 @@ function getTeam($: HLTVPage, n: 1 | 2): Team | undefined {
   return $(`.team${n}-gradient`).exists()
     ? {
         name: $(`.team${n}-gradient .teamName`).text(),
+        logoSrc: $(`.team${n}-gradient`)
+          .find('a')
+          .first()
+          .find('img')
+          .attr('src'),
         id: $(`.team${n}-gradient a`).attrThen('href', (href) =>
           href ? getIdAt(2, href) : undefined
         )
@@ -331,15 +336,18 @@ function getMaps($: HLTVPage): MapResult[] {
 
       if (!isNaN(team1TotalRounds) && !isNaN(team2TotalRounds)) {
         const halfsString = mapEl.find('.results-center-half-score').trimText()!
-        let halfs = [{team1Rounds: 0, team2Rounds: 0}, {team1Rounds: 0, team2Rounds: 0}]
+        let halfs = [
+          { team1Rounds: 0, team2Rounds: 0 },
+          { team1Rounds: 0, team2Rounds: 0 }
+        ]
         if (halfsString) {
-            halfs = halfsString
-              .split(' ')
-              .map((x) => x.replace(/\(|\)|;/g, ''))
-              .map((half) => ({
-                team1Rounds: Number(half.split(':')[0]),
-                team2Rounds: Number(half.split(':')[1])
-              }))
+          halfs = halfsString
+            .split(' ')
+            .map((x) => x.replace(/\(|\)|;/g, ''))
+            .map((half) => ({
+              team1Rounds: Number(half.split(':')[0]),
+              team2Rounds: Number(half.split(':')[1])
+            }))
         }
 
         result = {
