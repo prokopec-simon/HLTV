@@ -33,6 +33,7 @@ export interface MatchPreview {
   title?: string
   live: boolean
   stars: number
+  url: string
 }
 
 export const getMatches =
@@ -79,7 +80,7 @@ export const getMatches =
         const title = el.find('.matchInfoEmpty').text() || undefined
 
         const date = el.find('.matchTime').numFromAttr('data-unix')
-
+        const url = el.find('.a-reset').attr('href')
         let team1
         let team2
 
@@ -104,6 +105,17 @@ export const getMatches =
         const eventName = el.find('.matchEventLogo').attr('title')
         const event = events.find((x) => x.name === eventName)
 
-        return { id, date, stars, title, team1, team2, format, event, live }
+        return {
+          id,
+          date,
+          stars,
+          title,
+          team1,
+          team2,
+          format,
+          event,
+          live,
+          url
+        }
       })
   }
